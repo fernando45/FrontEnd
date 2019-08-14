@@ -9,6 +9,8 @@ import { SubirArchivoService } from '../subir-archivo/subir-archivo.service';
 import { of } from 'rxjs';
 
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,12 +20,18 @@ export class UsuarioService {
   token: string;
   menu: any [] = [];
 
+  
+
   constructor(
      public http: HttpClient,
      public router: Router,
-     public _subirArchivoService: SubirArchivoService) {
+     public _subirArchivoService: SubirArchivoService,
+     ) {
      this.cargaStorage();
   }
+
+ 
+
 
   estaLogueado() {
     return( this.token.length > 5) ? true : false;
@@ -65,8 +73,9 @@ export class UsuarioService {
         map((resp: any) => {
 
           this.guardarStorage(resp.id, resp.token, resp.usuario, resp.menu );
-
+          
           return true;
+
         }));
 
   }
@@ -99,6 +108,7 @@ export class UsuarioService {
       .pipe(
         map( (resp: any) => {
 
+       
           this.guardarStorage(resp.id, resp.token, resp.usuario, resp.menu );
           return resp.status;
 

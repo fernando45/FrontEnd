@@ -24,6 +24,10 @@ import { HospitalesComponent } from './hospitales/hospitales.component';
 import { MedicosComponent } from './medicos/medicos.component';
 import { MedicoComponent } from './medicos/medico.component';
 import { BusquedaComponent } from './busqueda/busqueda.component';
+import { UserIdleModule } from 'angular-user-idle';
+
+
+
 
 
 
@@ -47,6 +51,9 @@ import { BusquedaComponent } from './busqueda/busqueda.component';
         MedicosComponent,
         MedicoComponent,
         BusquedaComponent,
+        
+
+
     ],
 
     exports: [
@@ -60,7 +67,9 @@ import { BusquedaComponent } from './busqueda/busqueda.component';
         FormsModule,
         ChartsModule,
         PipesModule,
-        CommonModule
+        CommonModule,
+        UserIdleModule.forRoot({idle: 6, timeout: 300, ping: 120})
+
     ]
 
 

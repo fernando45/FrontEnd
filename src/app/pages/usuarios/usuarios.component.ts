@@ -4,6 +4,7 @@ import { UsuarioService } from '../../services/services.index';
 import Swal from 'sweetalert2';
 import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
 
+
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
