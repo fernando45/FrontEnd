@@ -125,7 +125,8 @@
                         <ul class="dropdown-user">
                             <li>
                                 <div class="dw-user-box" align="center">
-                                    <div class="u-img"><img [src]=" usuario.img | imagen " alt="user"></div>
+                                    <div class="u-img"><img [src]="usuario.img" alt="user"></div>
+                                    <!--  <div class="u-img"><img src="assets/no-img.jpg" alt="user"></div> -->
                                     <div class="u-text">
                                         <h4> {{ usuario.nombre }}</h4>
                                         <p class="text-muted"> {{usuario.email}} </p>
@@ -140,7 +141,7 @@
                             <li role="separator" class="divider"></li>
                             <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a (click)="_usuarioService.logout()" class="pointer"><i class="fa fa-power-off"></i> Logout</a></li>
+                            <li><a (click)="_USUARIOSERVICE.logout()" class="pointer"><i class="fa fa-power-off"></i> Logout</a></li>
                         </ul>
                     </div>
                 </li>

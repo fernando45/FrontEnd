@@ -14,11 +14,19 @@ import { PagesModule } from './pages/pages.module';
 import { ServiceModule } from './services/service.module';
 
 
+
 // Componentes
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './login/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GraphqlModule } from './graphql/graphql.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+// Interceptores
+import { InterceptorsModule } from './interceptors/interceptors.module';
+
+
 
 
 @NgModule({
@@ -26,7 +34,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AppComponent,
     LoginComponent,
     RegisterComponent,
-   
 
   ],
   imports: [
@@ -35,7 +42,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     PagesModule,
     FormsModule,
     ReactiveFormsModule,
-    ServiceModule
+    ServiceModule,
+    InterceptorsModule,
+    GraphqlModule,
+    BrowserAnimationsModule,
+    
+
+
   ],
   providers: [],
   bootstrap: [AppComponent]

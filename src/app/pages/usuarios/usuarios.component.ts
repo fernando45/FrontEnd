@@ -1,132 +1,211 @@
-import { Component, OnInit } from '@angular/core';
-import { Usuario } from '../../models/usuario.model';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UsuarioService } from '../../services/services.index';
 import Swal from 'sweetalert2';
 import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
+import { UserQuery } from '../../services/usuario/usuario.graphql-gen';
+import { DxDataGridComponent } from 'devextreme-angular';
+import { User} from '../../../../.src/app/generated/types';
+import { UsuarioComponent } from './usuario.component';
+import { Subscription } from 'rxjs';
+
 
 
 @Component({
-  selector: 'app-usuarios',
-  templateUrl: './usuarios.component.html',
-  styles: []
-})
-export class UsuariosComponent implements OnInit {
+    selector: 'app-usuarios',
+    templateUrl: './usuarios.component.html',
+    styles: [],
+    changeDetection: ChangeDetectionStrategy.OnPush
+  })
+  export class UsuariosComponent implements OnInit,  OnDestroy {
 
-  usuarios: Usuario[] = [];
-  desde: number = 0;
-  totalRegistros: number = 0;
-  cargando: boolean = true;
+   dataSource: any = {};
+   refres: any;
+   choser: boolean = false;
 
-  constructor( public _usuarioService: UsuarioService,
-               public _modalUploadService: ModalUploadService) { }
+   FilterPanel: boolean = false;
+   BuscarPanel: boolean = false;
 
-  ngOnInit() {
-    this.cargarUsuarios();
-    this._modalUploadService.notificacion
-          .subscribe( resp => this.cargarUsuarios() );
+
+   AccionBarra: string;
+   popupVisible: boolean = false;
+   selec: string = 'single';
+
+   selectedRows: string[];
+
+   usuario: User;
+   private eliminaSub: Subscription = null;
+
+
+   @ViewChild(DxDataGridComponent) grid: DxDataGridComponent;
+   @ViewChild(UsuarioComponent) forma: UsuarioComponent;
+
+
+    // tslint:disable-next-line: variable-name
+    constructor( public _usuarioService: UsuarioService,
+                 // tslint:disable-next-line: variable-name
+                 public _modalUploadService: ModalUploadService,
+                 private cdRef: ChangeDetectorRef) {
+
+                  this.dataSource = this._usuarioService.getStore();
 
   }
 
-  mostrarModal( id: string ){
+    accionBarraGrid($event) {
 
+      switch ($event) {
 
-    this._modalUploadService.mostrarModal( 'usuarios', id );
-  }
+        case 'nuevo':
+          this.nuevoUsuario();
+          break;
+        case 'editar':
+          this.editaUsuario();
+          break;
+        case 'borrar':
+          this.borrarUsuario();
+          break;
+        case 'duplicar':
+          break;
+        case 'refrescar':
+          this.grid.instance.refresh();
+          break;
+        case 'exportar':
+          this.grid.instance.exportToExcel(false);
+          break;
+        case 'columnas':
+          this.grid.instance.showColumnChooser();
+          console.log('columnas');
+          break;
+        case 'filtros':
+            if (this.FilterPanel) {
+              this.FilterPanel = false;
+            } else {
+              this.FilterPanel = true;
+            }
+            this.grid.instance.repaint();
+            break;
 
-  cargarUsuarios() {
+        case 'buscar':
 
-    this.cargando = true;
-
-    this._usuarioService.cargarUsuarios( this.desde )
-          .subscribe( (resp: any) => {
-
-       this.totalRegistros = resp.total;
-       this.usuarios = resp.usuarios;
-
-
-          });
-
-    this.cargando = false;
-  }
-
-  cambiarDesde( valor: number ) {
-
-    const desde = this.desde + valor;
-
-
-    if ( desde >= this.totalRegistros ) {
-    return;
+            if (this.BuscarPanel) {
+              this.BuscarPanel = false;
+            } else {
+              this.BuscarPanel = true;
+            }
+            this.grid.instance.repaint();
+            break;
+        case 'multiple':
+            if (this.selec === 'multiple') {
+              this.selec = 'single';
+            } else {
+              this.selec = 'multiple';
+            }
+            this.grid.instance.repaint();
+            break;
+      }
     }
-    if (desde < 0 ) {
-      return;
+
+
+
+    accionUsuario( $event ) {
+      const result: boolean = $event;
+      if ( result ) { this.grid.instance.refresh(); }
+
     }
 
-    this.desde += valor;
-    this.cargarUsuarios();
-
-  }
-
-  buscarUsuario( termino: string ) {
-
-    if ( termino.length <= 0 ) {
-      this.cargarUsuarios();
-      return;
+    nuevoUsuario() {
+      this.forma.nuevoUsuario();
     }
-    this.cargando = true;
 
-    this._usuarioService.buscarUsuarios( termino )
-          .subscribe( (usuarios: Usuario[]) => {
+    editaUsuario() {
 
-            this.usuarios = usuarios;
+      if (this.selec === 'multiple') {
+        Swal.fire({
+          title: '!No puedo hacer lo que me pides¡',
+          text: 'Está seleccionado el modo múltiple.',
+          type: 'warning',
+          confirmButtonText: 'Continua'
+        });
+      }
+      const id: string = this.selectedRows[0];
+      this.forma.Actualiza( id );
+    }
 
-          });
-    this.cargando = false;
-  }
-
-  borrarUsuario(usuario: Usuario ) {
-    if ( usuario._id === this._usuarioService.usuario._id ) {
+    borrarUsuario() {
+      if (this.selec === 'multiple') {
+        Swal.fire({
+          title: '!No puedo hacer lo que me pides¡',
+          text: 'Está seleccionado el modo múltiple.',
+          type: 'warning',
+          confirmButtonText: 'Continua'
+        });
+      }
       Swal.fire({
-        title: 'Error al borrar usuario',
-        text: 'No puede borrar el usuario en curso',
-        type: 'info',
-        confirmButtonText: 'aceptar'
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: 'Estás seguro?',
-      text: 'Quires eliminar el usuario' + usuario.nombre,
-      type: 'warning',
-      showCancelButton: true,
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, Borralo!'
-    }).then((result) => {
-      if (result.value) {
-
-        this._usuarioService.borrarUsuario( usuario._id )
-              .subscribe( borrado => {
-
-
-
-                 Swal.fire(
-          'Borrado!',
+          title: '¿Estás seguro?',
+          text: 'Esta acción no es reversible.',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, borralo!'
+      }).then((result) => {
+        if (result.value) {
+        const id: string = this.selectedRows[0];
+        this.eliminaSub = this._usuarioService.borrarUsuario( id )
+            .subscribe(resp => {});
+        this.grid.instance.refresh();
+        Swal.fire(
+          'Eliminado!',
           'El usuario ha sido eliminado.',
           'success'
         );
-                 this.cargarUsuarios();
-              });
       }
     });
+
+
+    }
+
+    cierraForm() {
+    }
+
+ 
+
+
+  ngOnInit() {
+
+      this._modalUploadService.notificacion
+        .subscribe( resp => this.cargarUsuarios() );
   }
 
-  guardarUsuario( usuario: Usuario ){
+  ngOnDestroy() {
+      this.grid.instance.clearFilter();
+  }
+  mostrarModal( id: string ) {
 
-    this._usuarioService.actualizarUsuario( usuario )
-          .subscribe();
 
+      this._modalUploadService.mostrarModal( 'usuarios', id );
   }
 
+cargarUsuarios() {
+
+        return this._usuarioService.allUser(0, 9, '', '' )
+            .subscribe( resp => {
+              console.log( resp.totalCount);            });
+
+    }
+cargaUsuario( id: string ) {
+    return this._usuarioService.getUser( id )
+        .subscribe( (resp: UserQuery) => {
+          this.usuario = resp.userPorId.user;
+        });
 }
+
+
+buscarUsuario( termino: string ) {
+
+
+    }
+
+
+
+  }
+

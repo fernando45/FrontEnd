@@ -1,0 +1,23 @@
+.espacio {
+    margin-top: 30px;
+}
+
+.centrar {
+    display: flex;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.espacioSelect {
+    padding-top: 20px;
+}
+
+.label {
+    width: 100%;
+    margin-left: -10px;
+}
+
+.btImagen {
+    margin-top: 20px;
+    text-align: center;
+}

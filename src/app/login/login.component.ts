@@ -1,13 +1,11 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { ResultToken } from './../../../.src/app/generated/types';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { UsuarioService } from '../services/services.index';
-import { Usuario } from '../models/usuario.model';
-import { UserIdleService } from 'angular-user-idle';
-import Swal from 'sweetalert2';
-// import { CompileTemplateMetadata } from '@angular/compiler';
-// import { interval, timer } from 'rxjs';
-// import { timeInterval } from 'rxjs/operators';
+import { LoginData} from './login.interface';
+
+
 
 
 
@@ -21,6 +19,11 @@ declare const gapi: any;
 })
 export class LoginComponent implements OnInit {
 
+  user: LoginData = {
+    email: '',
+    password: ''
+  };
+
   email: string;
   recuerdame: boolean = false;
 
@@ -30,9 +33,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
      public router: Router,
-     public _usuarioService: UsuarioService,
-     private userIdle: UserIdleService,
-     private zone: NgZone
+     public _USUARIOSERVICE: UsuarioService,
+
       ) { }
 
   ngOnInit() {
@@ -44,85 +46,8 @@ export class LoginComponent implements OnInit {
       this.recuerdame = true;
     }
 
-
   }
 
-  InciarIdle() {
-
-    // Logica del servicvio:
-
-    // El usuario está inactivo el tiempo que dice idle
-    // Se dispara ontimeStart y cuenta el tiempo de timeout:
-    // El usuario no detiene el ontimerStart, este finaliza y dispara el onTimeout
-
-    this.userIdle.setConfigValues({idle: 1800, timeout: 1, ping: 120}); // 1800- 30 minuntos.
-
-    // Start watching for user inactivity.
-    this.userIdle.startWatching();
-
-    // Start watching when user idle is starting.
-    this.userIdle.onTimerStart().subscribe(count => {});
-    // Start watch when time is up.
-    this.userIdle.onTimeout().subscribe(() => {
-      this.userIdle.stopWatching();
-
-      let timerInterval;
-
-      Swal.fire({
-        title: 'Alerta de cierre por inactividad',
-        html:
-          'Se cerrará en:  <strong></strong>  segundos <br/><br/><br/>' +
-          '<button id="increase" class="btn btn-warning">' +
-            'Continuar con la sessión' +
-          '</button><br/>',
-        timer: 60000,
-
-        onBeforeOpen: () => {
-          const content = Swal.getContent();
-          const $ = content.querySelector.bind(content);
-
-
-          const increase = $('#increase');
-
-          Swal.showLoading();
-
-          increase.addEventListener('click', () => {
-            Swal.close ();
-            this.resetIdle();
-          });
-
-
-          timerInterval = setInterval(() => {
-
-            Swal.getContent().querySelector('strong')
-            .textContent = (Swal.getTimerLeft() / 1000)
-              .toFixed(0);
-
-
-          }, 100);
-        },
-
-        onClose: () => {
-          clearInterval(timerInterval);
-        }
-      }).then((result) => {
-
-         if (result.dismiss === Swal.DismissReason.timer)  {
-           this.zone.run(() => {
-             location.reload();
-             this._usuarioService.logout();
-           });
-        }
-
-      });
-    });
-  }
-
-
-  resetIdle() {
-    this.userIdle.resetTimer();
-    this.userIdle.startWatching();
-  }
 
 
   googleInit() {
@@ -145,14 +70,14 @@ export class LoginComponent implements OnInit {
       const token = googleUser.getAuthResponse().id_token;
 
 
-      this._usuarioService.loginGoogle( token )
+      this._USUARIOSERVICE.loginGoogle( token )
         .subscribe(resp => window.location.href = '#/dashboard' );
-      this.InciarIdle();
 
 
     });
 
   }
+
 
   ingresar( forma: NgForm  ) {
 
@@ -160,12 +85,11 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const usuario = new Usuario( null, forma.value.email, forma.value.password);
-    this._usuarioService.login( usuario, forma.value.recuerdame )
-      .subscribe( () => {
+    this._USUARIOSERVICE.login( this.user.email, this.user.password )
+      .subscribe( ( result: ResultToken) => {
+     
         return this.router.navigate(['/dashboard']);
-
-      } );
+    });
 
   }
 

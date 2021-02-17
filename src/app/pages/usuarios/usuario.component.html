@@ -1,0 +1,93 @@
+<dx-popup [width]="600" [height]="popupHeight" [showTitle]="true" title="Ficha de usuario" [dragEnabled]="true" [closeOnOutsideClick]="false" [(visible)]="popupVisible">
+
+    <div class="container">
+        <form *ngIf="contactForm" [formGroup]="contactForm" (ngSubmit)="guardar()">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="centrar">
+                        <ngx-avatar size="110" name="Fernando Gonzalez"></ngx-avatar>
+                    </div>
+                    <div class="centrar">
+                        <dx-button stylingMode="outlined" text="Imagen" type="default" [width]="120">
+                        </dx-button>
+
+                    </div>
+                </div>
+                <div class="col-sm-8">
+
+                    <div class="dx-fieldset">
+                        <div class="dx.field">
+                            <div class="dx-field-label">Nombre *</div>
+                            <div>
+                                <dx-text-box name="nombre" formControlName="nombre" placeholder="Introduzca nombre" [isValid]="nombreControl.valid || nombreControl.pristine">
+                                </dx-text-box>
+                                <span class="text-danger" *ngIf="nombreControl.hasError('required') && !nombreControl.pristine">Requerido</span>
+                                <span class="text-danger" *ngIf="nombreControl.hasError('minlength') && !nombreControl.pristine">Mínimo 6 caracteres.</span>
+                                <span class="text-danger" *ngIf="nombreControl.hasError('maxlength') && !nombreControl.pristine">Máximo 20 caracteres.</span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dx-fieldset espacio">
+                        <div class="dx.field">
+                            <div class="dx-field-label">Correo electrónico *</div>
+                            <div>
+                                <dx-text-box name="email" formControlName="email" placeholder="Introduzca su email" [isValid]="emailControl.valid || emailControl.pristine">
+                                </dx-text-box>
+                                <span class="text-danger" *ngIf="emailControl.hasError('required') && !emailControl.pristine">Requerido</span>
+                                <span class="text-danger" *ngIf="emailControl.hasError('email') && !emailControl.pristine">No es un email válido</span>
+                                <span class="text-danger" *ngIf="emailControl.hasError('emailExist') && emailControl.dirty">El email ya está en uso</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dx-fieldset espacio" *ngIf="botonVisible">
+                        <div class="dx.field">
+                            <div>
+                                <dx-button *ngIf="passControl.enabled" stylingMode="outlined" text="NO establecer contraseña" type="danger" (onClick)="activaPass()">
+                                </dx-button>
+                                <dx-button *ngIf="!passControl.enabled" stylingMode="outlined" text="Establecer contraseña" type="success" (onClick)="activaPass()">
+                                </dx-button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="dx-fieldset espacio" *ngIf="passControl.enabled">
+                        <div class="dx.field">
+                            <div class="dx-field-label">Contraseña *</div>
+                            <div>
+                                <dx-text-box name="password" formControlName="password" placeholder="Introduzca su contraseña" [isValid]="passControl.valid || passControl.pristine">
+                                </dx-text-box>
+                                <span class="text-danger" *ngIf="passControl.hasError('required') && !passControl.pristine">Requerido</span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dx-fieldset espacio">
+                        <div class="dx.field">
+                            <div class="dx-field-label label" witch="100%">Permisos del usuario *</div>
+                            <div class="espacioSelect">
+                                <dx-select-box name="role" formControlName="role" [items]="['ADMIN','USUARIO', 'CLIENTE']" placeholder="Introduzca Rol">
+                                </dx-select-box>
+                                <span class="text-danger" *ngIf="roleControl.hasError('required') && !roleControl.pristine">Requerido</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row espacio">
+                <div class="col-sm">
+                </div>
+                <div class="col-sm">
+                    <dx-button stylingMode="contained" text="Guardar" type="default" [width]="140" (onClick)="guardar()" [disabled]="contactForm.invalid">
+                    </dx-button>
+                </div>
+                <div class="col-sm">
+                    <dx-button stylingMode="contained" text="Salir" type="danger" [width]="140" (onClick)="cerrar()">
+                    </dx-button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</dx-popup>

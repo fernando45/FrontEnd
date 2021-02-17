@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
 import { URL_SERVICIOS } from '../../config/config';
 
+
+
 @Injectable()
 export class SubirArchivoService {
 
-  constructor() { }
+  constructor(  ) {
+
+  }
 
 
   subirArchivo(archivo: File, tipo: string, id: string) {
 
-  
+
     return new Promise((resolve, reject) => {
 
       let formData = new FormData();
@@ -39,4 +43,7 @@ export class SubirArchivoService {
 
     });
   }
+
+
+
 }

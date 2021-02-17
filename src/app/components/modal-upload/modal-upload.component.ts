@@ -13,12 +13,14 @@ export class ModalUploadComponent implements OnInit {
   imagenSubir: File;
   imagenTemp: string;
 
+  noImagen: string = 'https://res.cloudinary.com/djuaqqcwq/image/upload/v1578738225/no-img_sb5wsf.jpg';
+
 
 
   constructor(
     public _subirArchivoAervice: SubirArchivoService,
     public _modalUploadService: ModalUploadService
-  ){}
+  ) {}
 
   ngOnInit() {
   }
@@ -30,11 +32,11 @@ export class ModalUploadComponent implements OnInit {
     this._modalUploadService.ocultalModal();
 
   }
-  mostrarModal(){
+  mostrarModal() {
 
   }
 
-  
+
   subirImagen() {
     this._subirArchivoAervice.subirArchivo( this.imagenSubir, this._modalUploadService.tipo, this._modalUploadService.id)
                 .then( resp => {
@@ -66,8 +68,8 @@ export class ModalUploadComponent implements OnInit {
     }
 
     this.imagenSubir = archivo;
-    let reader = new FileReader();
-    let urlImagenTemp = reader.readAsDataURL(archivo);
+    const reader = new FileReader();
+    const urlImagenTemp = reader.readAsDataURL(archivo);
 
 
     reader.onloadend = () => this.imagenTemp = reader.result.toString();

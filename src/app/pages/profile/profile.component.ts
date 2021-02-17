@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
 import { UsuarioService } from '../../services/services.index';
 import Swal from 'sweetalert2';
+import { User } from '../../../../.src/app/generated/types';
 
 @Component({
   selector: 'app-profile',
@@ -10,14 +11,14 @@ import Swal from 'sweetalert2';
 })
 export class ProfileComponent implements OnInit {
 
-  usuario: Usuario;
+  usuario: User;
   imagenSubir: File;
   imagenTemp: string;
 
   constructor(
-    public _usuarioService: UsuarioService
+    public _USUARIOSERVICE: UsuarioService
   ) {
-    this.usuario = this._usuarioService.usuario;
+    this.usuario = this._USUARIOSERVICE.usuario;
   }
 
   ngOnInit() {
@@ -25,22 +26,22 @@ export class ProfileComponent implements OnInit {
 
   guardar( usuario: Usuario) {
     this.usuario.nombre = usuario.nombre;
-    if( !this.usuario.google){
+    if ( !this.usuario.google) {
       this.usuario.email = usuario.email;
     }
 
-    this._usuarioService.actualizarUsuario( this.usuario )
+    this._USUARIOSERVICE.actualizarUsuario( this.usuario )
           .subscribe();
   }
 
   seleccionImagen( archivo: File ) {
 
-  if( !archivo ) {
+  if ( !archivo ) {
     this.imagenSubir = null;
     return;
   }
 
-  if( archivo.type.indexOf('image') < 0) {
+  if ( archivo.type.indexOf('image') < 0) {
 
     Swal.fire({
       title: 'Solo imagenes',
@@ -52,8 +53,8 @@ export class ProfileComponent implements OnInit {
     return;  }
 
   this.imagenSubir = archivo;
-  let reader = new FileReader();
-  let urlImagenTemp = reader.readAsDataURL( archivo );
+  const reader = new FileReader();
+  const urlImagenTemp = reader.readAsDataURL( archivo );
 
 
   reader.onloadend = () => this.imagenTemp = reader.result.toString();
@@ -62,7 +63,7 @@ export class ProfileComponent implements OnInit {
 
   cambiarImagen() {
 
-    this._usuarioService.cambiarImagen( this.imagenSubir, this.usuario._id);
+    this._USUARIOSERVICE.cambiarImagen( this.imagenSubir, this.usuario._id);
 
   }
 

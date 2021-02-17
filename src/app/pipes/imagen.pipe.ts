@@ -9,10 +9,12 @@ export class ImagenPipe implements PipeTransform {
 
   transform(img: string, tipo: string= 'usuario' ): any {
 
-    let url = URL_SERVICIOS + '/imagenes';
+    let url = 'https://res.cloudinary.com/djuaqqcwq/image/upload/v1590225005/profile_hzljny.png';
 
-    if (!img) {
-      return url + '/usuarios/xxx';
+
+    if (!img || img === '' ) {
+
+     return url ;
     }
 
     if ( img.indexOf('https') >= 0 ) {
@@ -36,6 +38,7 @@ export class ImagenPipe implements PipeTransform {
            url += '/usuarios/xxx';
 
     }
+
     return url;
   }
 

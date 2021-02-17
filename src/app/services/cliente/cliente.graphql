@@ -1,0 +1,34 @@
+query listaClientes ($skip: Int, $limit: Int, $orden: String, $filter: String) {
+  clientes (skip: $skip, limit: $limit, orden: $orden, filter: $filter) {
+    status
+    message
+    cliente {
+      _id
+      documentos
+      documento
+      contacto {
+        _id
+        valor
+      }
+    }
+  }
+  
+  totalCount
+  
+}
+mutation nuevoCliente($cliente: ClienteInput!) {
+  registroCliente(cliente: $cliente) {
+    status
+    message	
+    cliente {
+      _id
+      contacto{
+				_id
+        valor
+      }
+      registerDate
+      
+    }
+    
+  }
+}

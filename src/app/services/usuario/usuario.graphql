@@ -1,0 +1,119 @@
+query login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    status
+    message
+    token
+    user {
+      _id
+      nombre
+      apellidos
+      email
+      img
+      role
+    }
+  }
+}
+
+
+query renuevaToken($email: String!){
+  renuevaToken(email: $email){
+    status
+    message
+    token
+  }
+}
+
+ mutation addUser($user: UserInput!) {
+        register(user: $user) {
+            status
+            message
+            user {
+                nombre
+                apellidos
+                email
+                password
+                google
+                role
+            }
+        }
+    }
+
+  mutation eliminarUsuario($id: String!){
+  eliminarUsuario(id: $id){
+  	status
+    message
+    user{
+      _id
+      nombre
+      email
+    }
+  }
+}
+
+query user ($id: String!){
+  userPorId( id: $id)  {
+    status
+    message
+    user{
+      _id
+      nombre
+      apellidos
+      email
+      role
+      img
+      password
+      estado
+      google      
+    }   
+  }
+}
+
+
+
+query allUsers($skip: Int, $limit: Int, $orden: String, $filter: String ){
+  users(skip: $skip, limit: $limit, orden: $orden, filter: $filter)  {
+    status
+    message
+    user{
+      _id
+      nombre
+      email
+      role     
+      img
+    }     
+    
+  }
+  totalCount
+}
+
+query userPorEmail($email: String!){
+  userPorEmail(email: $email){
+    status
+    message
+    user{
+      _id
+      nombre
+      apellidos
+      email
+      role
+      img      
+    }       
+  }  
+}
+
+
+mutation actualizaUsuario($user: UserInput!) {
+  actualizarUsuario(user: $user) {
+    status
+    message
+    user {
+      _id
+      nombre
+      apellidos
+      email
+      google
+      password
+      estado
+    }
+  }
+}
